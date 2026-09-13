@@ -50,11 +50,10 @@ function ActionButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className={`p-1.5 rounded-xl transition-all ${
-        disabled
+      className={`p-1.5 rounded-xl transition-all ${disabled
           ? "opacity-30 cursor-not-allowed"
           : "hover:bg-[var(--color-surface-container)] hover:scale-105 active:scale-95"
-      } ${colorClass}`}
+        } ${colorClass}`}
     >
       <FontAwesomeIcon icon={icon} style={{ width: 19, height: 19 }} />
     </button>
@@ -117,11 +116,10 @@ export default function AppointmentTable({
               key={tab}
               type="button"
               onClick={() => setActiveFilter(tab)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-                activeFilter === tab
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${activeFilter === tab
                   ? "bg-[var(--color-surface-container-lowest)] text-[var(--color-primary)] font-semibold shadow-sm"
                   : "text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)]"
-              }`}
+                }`}
             >
               {tab}
             </button>
