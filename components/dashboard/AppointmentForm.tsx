@@ -116,11 +116,10 @@ function IconInput({
       />
       <input
         id={id}
-        className={`w-full h-11 pl-11 pr-4 rounded-xl bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] text-sm placeholder:text-[var(--color-outline)] transition-all focus:outline-none focus:bg-[var(--color-surface-container-lowest)] ${
-          hasError
-            ? "ring-2 ring-[var(--color-error)]"
-            : "focus:ring-1 focus:ring-[var(--color-primary-fixed-dim)]"
-        }`}
+        className={`w-full h-11 pl-11 pr-4 rounded-xl bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] text-sm placeholder:text-[var(--color-outline)] transition-all focus:outline-none focus:bg-[var(--color-surface-container-lowest)] ${hasError
+          ? "ring-2 ring-[var(--color-error)]"
+          : "focus:ring-1 focus:ring-[var(--color-primary-fixed-dim)]"
+          }`}
         {...props}
       />
     </div>
@@ -150,11 +149,10 @@ function IconSelect({
       />
       <select
         id={id}
-        className={`w-full h-11 pl-11 pr-8 appearance-none rounded-xl bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] text-sm transition-all focus:outline-none focus:bg-[var(--color-surface-container-lowest)] cursor-pointer ${
-          hasError
-            ? "ring-2 ring-[var(--color-error)]"
-            : "focus:ring-1 focus:ring-[var(--color-primary-fixed-dim)]"
-        }`}
+        className={`w-full h-11 pl-11 pr-8 appearance-none rounded-xl bg-[var(--color-surface-container-low)] text-[var(--color-on-surface)] text-sm transition-all focus:outline-none focus:bg-[var(--color-surface-container-lowest)] cursor-pointer ${hasError
+          ? "ring-2 ring-[var(--color-error)]"
+          : "focus:ring-1 focus:ring-[var(--color-primary-fixed-dim)]"
+          }`}
         {...props}
       >
         {children}
@@ -195,15 +193,19 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
   const [aiGenerating, setAiGenerating] = useState(false);
 
   // ----------------------------------------------------------------
-  // Phone formatter
+  // Phone formatter (India: +91 XXXXX-XXXXX)
   // ----------------------------------------------------------------
   const formatPhone = (raw: string) => {
-    const digits = raw.replace(/\D/g, "").slice(0, 10);
+    let cleaned = raw.trim();
+    if (cleaned.startsWith("+91")) {
+      cleaned = cleaned.slice(3).trim();
+    } else if (cleaned.startsWith("91") && cleaned.replace(/\D/g, "").length > 10) {
+      cleaned = cleaned.replace(/\D/g, "").slice(2);
+    }
+    const digits = cleaned.replace(/\D/g, "").slice(0, 10);
     if (digits.length === 0) return "";
-    if (digits.length <= 3) return `+1 (${digits}`;
-    if (digits.length <= 6)
-      return `+1 (${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `+1 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    if (digits.length <= 5) return `+91 ${digits}`;
+    return `+91 ${digits.slice(0, 5)}-${digits.slice(5)}`;
   };
 
   const handleChange = useCallback(
@@ -236,15 +238,48 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
   // ----------------------------------------------------------------
   // Validation
   // ----------------------------------------------------------------
+  const validateField = (
+    name: keyof AppointmentFormValues,
+    value: string
+  ): string | undefined => {
+    switch (name) {
+      case "patientName":
+        if (value.trim().length < 3) {
+          return "Please enter patient's legal name (at least 3 letters).";
+        }
+        return undefined;
+      case "phone":
+        if (!/^\+91 [6-9]\d{4}-\d{5}$/.test(value)) {
+          return "Enter a valid 10-digit Indian mobile number (e.g. +91 98765-43210).";
+        }
+        return undefined;
+      case "doctor":
+        if (!value) return "Please select an attending practitioner.";
+        return undefined;
+      case "date":
+        if (!value) return "Choose a valid consultation date.";
+        return undefined;
+      case "time":
+        if (!value) return "Select an available slot.";
+        return undefined;
+      default:
+        return undefined;
+    }
+  };
+
   const validate = (): FormErrors => {
     const errs: FormErrors = {};
-    if (values.patientName.trim().length < 3)
-      errs.patientName = "Please enter patient's legal name (at least 3 letters).";
-    if (!/^\+1 \(\d{3}\) \d{3}-\d{4}$/.test(values.phone))
-      errs.phone = "Enter a valid mobile number (e.g. +1 (555) 000-0000).";
-    if (!values.doctor) errs.doctor = "Please select an attending practitioner.";
-    if (!values.date) errs.date = "Choose a valid consultation date.";
-    if (!values.time) errs.time = "Select an available slot.";
+    const fields: (keyof AppointmentFormValues)[] = [
+      "patientName",
+      "phone",
+      "doctor",
+      "date",
+      "time",
+    ];
+    for (const f of fields) {
+      const err = validateField(f, values[f] ?? "");
+      if (err) errs[f] = err;
+    }
     return errs;
   };
 
@@ -261,6 +296,28 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
     onSubmit(values);
     setValues({ ...EMPTY, date: todayStr });
     setErrors({});
+  };
+
+  // ----------------------------------------------------------------
+  // Keyboard Enter handler: validate only current active field
+  // ----------------------------------------------------------------
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "TEXTAREA" ||
+        target.getAttribute("type") === "submit"
+      ) {
+        return;
+      }
+      e.preventDefault();
+      const name = target.getAttribute("name") as keyof AppointmentFormValues | null;
+      if (name) {
+        const val = values[name] ?? "";
+        const err = validateField(name, val);
+        setErrors((prev) => ({ ...prev, [name]: err }));
+      }
+    }
   };
 
   // ----------------------------------------------------------------
@@ -282,7 +339,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
         <div className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: "#61ce70", color: "#143318" }}
+            style={{ color: "#143318" }}
           >
             <FontAwesomeIcon icon={faCalendarCheck} style={{ width: 22, height: 22 }} />
           </div>
@@ -308,17 +365,13 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
         id="appointment-form"
         noValidate
         onSubmit={handleSubmit}
+        onKeyDown={handleKeyDown}
         className="flex flex-col gap-4"
       >
         {/* Patient Name */}
         <FieldWrapper
           id="patient-name"
           label="Patient Full Name"
-          badge={
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-outline)]">
-              Required
-            </span>
-          }
           error={errors.patientName}
         >
           <IconInput
@@ -326,7 +379,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             name="patientName"
             icon={faUser}
             type="text"
-            placeholder="e.g. Sarah Connor"
+            placeholder="e.g. Surya"
             value={values.patientName}
             onChange={handleChange}
             hasError={!!errors.patientName}
@@ -338,11 +391,6 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
         <FieldWrapper
           id="patient-phone"
           label="Mobile Number"
-          badge={
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--color-outline)]">
-              SMS Alert
-            </span>
-          }
           error={errors.phone}
         >
           <IconInput
@@ -350,7 +398,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             name="phone"
             icon={faPhone}
             type="tel"
-            placeholder="+1 (555) 000-0000"
+            placeholder="+91 12345-67890"
             value={values.phone}
             onChange={handleChange}
             hasError={!!errors.phone}
@@ -505,11 +553,10 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
                 key={slot}
                 type="button"
                 onClick={() => handleQuickSlot(slot)}
-                className={`px-3 py-1 text-xs rounded-full font-medium transition-colors ${
-                  values.time === slot
-                    ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] font-semibold"
-                    : "bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container)] hover:text-[var(--color-on-surface)]"
-                }`}
+                className={`px-3 py-1 text-xs rounded-full font-medium transition-colors ${values.time === slot
+                  ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] font-semibold"
+                  : "bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container)] hover:text-[var(--color-on-surface)]"
+                  }`}
               >
                 {slot}
               </button>

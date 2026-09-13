@@ -110,8 +110,8 @@ export default function HeroBanner({
       </div>
 
       {/* Search + info chips */}
+      {/*
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--color-surface-container-lowest)] p-4 rounded-2xl shadow-sm">
-        {/* Search */}
         <div className="relative flex-1 max-w-md">
           <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-outline)]" style={{ width: 20 }} />
           <input
@@ -124,7 +124,6 @@ export default function HeroBanner({
           />
         </div>
 
-        {/* Info chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-0.5 md:pb-0">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-surface-container-low)] shrink-0">
             <FontAwesomeIcon
@@ -148,6 +147,7 @@ export default function HeroBanner({
           </div>
         </div>
       </div>
+      */}
     </div>
   );
 }

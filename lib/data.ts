@@ -117,35 +117,5 @@ export const buildSeedAppointments = () => {
   const yesterday = new Date(Date.now() - 86400000);
 
   return [
-    {
-      id: "apt-101",
-      patientName: "Eleanor Vance",
-      phone: "+1 (555) 234-5678",
-      doctor: "Dr. Sarah Jenkins",
-      specialty: "Cardiology",
-      date: formatDateIso(today),
-      time: "10:30 AM",
-      status: "Upcoming" as const,
-    },
-    {
-      id: "apt-102",
-      patientName: "Marcus Aurelius",
-      phone: "+1 (555) 876-5432",
-      doctor: "Dr. David Kim",
-      specialty: "General Medicine",
-      date: formatDateIso(tomorrow),
-      time: "02:00 PM",
-      status: "Upcoming" as const,
-    },
-    {
-      id: "apt-103",
-      patientName: "Clara Oswald",
-      phone: "+1 (555) 345-6789",
-      doctor: "Dr. Elena Rostova",
-      specialty: "Pediatrics",
-      date: formatDateIso(yesterday),
-      time: "09:00 AM",
-      status: "Completed" as const,
-    },
   ];
 };
