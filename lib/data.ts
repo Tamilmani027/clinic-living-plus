@@ -10,10 +10,6 @@ export const DOCTORS: Doctor[] = [
     specialty: "Registered Holistic Nutritionist Transformation Specialist",
     rating: 4.9,
     nextAvailable: "02:00 PM",
-    avatarUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCn2gQTQdmnWj52i2dFEycqT2fy6dn3Sq9A6tWTZAJstfohzFT6GM_qpAFnRZYmcYv_JQWpQ-Q2YgkFQbB3gfq6Zm3TsjxfGYwRV9chTBLtUbdeD7pLxSUeYDGAWS-XR_YzBJOectFvpt_jMDBh0C-1vd_XG_sk6RP8PScrWdgoZpqxKVvYx61CZshZ6sCICyycG0viJ6_WqEwg86zUGGr7wLhfvTn-Z413WLwZNkNB59CrH3yPD66Xww",
-    avatarAlt:
-      "Roshni Sanghvi, Registered Holistic Nutritionist Transformation Specialist",
   },
   {
     id: "dr-tejas",
@@ -35,10 +31,7 @@ export const DOCTORS: Doctor[] = [
     specialty: "Consultant physiotherapist",
     rating: 4.8,
     nextAvailable: "Tomorrow",
-    avatarUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuD1CYvQrCgFakQhKuizJnA7ZIFkR3oJdP0Zsq57tf2FgOQ-WWo63cC4g3DZ3TDW4xIsvhMpe-Pt-gSD_gDGSwDh1WlKcQbI8IbLwYxxd0NYybjohyO73vF-sae__eCaH2ECBUv_bsniAp5Xld5wNgWVr66rvWK_uczM3Bj1_wSfi5pmxu_BuW90Uf-veyyUvddaIfbdsLUpCjF-56Spkj9-iQuccVyAHkZwIhYjI3IDdWVbbHt1mK99nA",
-    avatarAlt:
-      "Dr. David Kim, general physician in a contemporary outpatient clinic",
+
   },
   {
     id: "dr-anitha",

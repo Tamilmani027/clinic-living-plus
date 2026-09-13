@@ -33,6 +33,7 @@ export interface AppointmentFormValues {
   date: string;
   time: string;
   symptoms?: string;
+  aiSummary?: string;
 }
 
 export interface StatCardData {

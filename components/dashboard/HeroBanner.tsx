@@ -53,27 +53,30 @@ export default function HeroBanner({
   return (
     <div className="flex flex-col gap-5">
       {/* Hero card */}
-      <div className="relative overflow-hidden rounded-2xl bg-[var(--color-surface-container-lowest)] shadow-sm p-6 md:p-10">
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-sm p-6 md:p-10 text-white"
+        style={{ backgroundColor: "#0D2318" }}
+      >
         {/* Decorative blobs */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[var(--color-primary-fixed)]/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[var(--color-surface-container-high)]/40 blur-2xl pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-black/10 blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Heading */}
           <div className="flex flex-col gap-1 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--color-primary)]">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-[#a8f5c3]">
                 Clinical Management System
               </span>
-              <span className="text-[var(--color-outline-variant)]">•</span>
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--color-outline)]">
+              <span className="text-white/40">•</span>
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-white/80">
                 {today}
               </span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-[var(--color-on-surface)]">
+            <h1 className="text-4xl font-bold tracking-tight text-white">
               Clinical Outpatient Desk
             </h1>
-            <p className="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
+            <p className="text-sm text-white/85 leading-relaxed">
               Streamlined scheduling, triage prioritization, and real-time patient
               encounter tracking for health practitioners.
             </p>

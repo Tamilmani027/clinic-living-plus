@@ -41,9 +41,9 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
         <span className="text-xs text-[var(--color-outline)]">
           {doctor.specialty} Department
         </span>
-        <span className="text-[11px] font-semibold text-[var(--color-tertiary)] mt-0.5">
+        {/*<span className="text-[11px] font-semibold text-[var(--color-tertiary)] mt-0.5">
           Next Available: {doctor.nextAvailable}
-        </span>
+        </span>*/}
       </div>
     </div>
   );

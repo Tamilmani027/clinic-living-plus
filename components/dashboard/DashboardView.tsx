@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import HeroBanner from "./HeroBanner";
 import AppointmentForm from "./AppointmentForm";
 import AppointmentTable from "./AppointmentTable";
@@ -12,6 +12,13 @@ import type {
   AppointmentFormValues,
   AppointmentStatus,
 } from "@/lib/types";
+import {
+  getAppointments,
+  createAppointment,
+  updateAppointmentStatus,
+  deleteAppointment,
+} from "@/lib/appointments";
+import { isSupabaseConfigured, type DbAppointment } from "@/lib/supabaseClient";
 
 let idCounter = 200;
 
@@ -24,20 +31,67 @@ function generateToastId(): string {
   return `toast-${Date.now()}-${Math.random()}`;
 }
 
+const LOCAL_STORAGE_KEY = "clinic_living_plus_appointments_cache_v1";
+
+function loadLocalAppointments(): Appointment[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not parse localStorage appointments:", err);
+  }
+  return [];
+}
+
+function saveLocalAppointments(items: Appointment[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
+  } catch (err) {
+    console.warn("Could not save appointments to localStorage:", err);
+  }
+}
+
+// Convert Supabase DB record to frontend Appointment model
+function mapDbToFrontend(item: DbAppointment): Appointment {
+  const [doctorName, specialty] = item.doctor.includes("|")
+    ? item.doctor.split("|")
+    : [item.doctor, "General Medicine"];
+
+  let status: AppointmentStatus = "Upcoming";
+  if (item.status === "Completed") status = "Completed";
+  else if (item.status === "Canceled" || item.status === "Cancelled") status = "Canceled";
+  else status = "Upcoming"; // "Scheduled" or "Upcoming"
+
+  return {
+    id: item.id.toString(),
+    patientName: item.patient_name,
+    phone: item.mobile,
+    doctor: doctorName,
+    specialty: specialty || "General Medicine",
+    date: item.date,
+    time: item.time,
+    status,
+    symptoms: item.reason || undefined,
+    aiSummary: item.summary || undefined,
+  };
+}
+
 /**
- * Top-level Client Component that owns all mutable state:
- * - appointments list
- * - search query (shared between HeroBanner and AppointmentTable)
- * - toast notifications
- *
- * It passes callbacks down to children; no prop drilling beyond one level.
+ * Top-level Client Component that connects to Supabase database
+ * with real-time UI updates, optimistic UI, and localStorage persistence.
  */
 export default function DashboardView() {
-  const [appointments, setAppointments] = useState<Appointment[]>(
-    () => buildSeedAppointments()
-  );
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // ----------------------------------------------------------------
   // Toast helpers
@@ -55,13 +109,54 @@ export default function DashboardView() {
   }, []);
 
   // ----------------------------------------------------------------
+  // 1. Immediate load from localStorage on client mount (prevents wipe on F5)
+  // ----------------------------------------------------------------
+  useEffect(() => {
+    const cached = loadLocalAppointments();
+    if (cached.length > 0) {
+      setAppointments(cached);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // ----------------------------------------------------------------
+  // 2. Fetch latest records from Supabase and sync
+  // ----------------------------------------------------------------
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    let isMounted = true;
+    async function fetchFromSupabase() {
+      try {
+        const dbData = await getAppointments();
+        if (isMounted && dbData) {
+          if (dbData.length > 0) {
+            const mapped = dbData.map(mapDbToFrontend);
+            setAppointments(mapped);
+            saveLocalAppointments(mapped);
+          }
+        }
+      } catch (err: any) {
+        console.warn("Supabase fetch notice:", err?.message || err);
+      }
+    }
+
+    fetchFromSupabase();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // ----------------------------------------------------------------
   // Appointment mutations
   // ----------------------------------------------------------------
   const handleFormSubmit = useCallback(
-    (values: AppointmentFormValues) => {
+    async (values: AppointmentFormValues) => {
       const [doctorName, specialty] = values.doctor.split("|");
+      const localId = generateId();
+
       const newApt: Appointment = {
-        id: generateId(),
+        id: localId,
         patientName: values.patientName,
         phone: values.phone,
         doctor: doctorName,
@@ -70,39 +165,95 @@ export default function DashboardView() {
         time: values.time,
         status: "Upcoming",
         symptoms: values.symptoms,
+        aiSummary: values.aiSummary,
       };
-      setAppointments((prev) => [newApt, ...prev]);
+
+      // 1. Immediately persist to state & localStorage
+      setAppointments((prev) => {
+        const updated = [newApt, ...prev];
+        saveLocalAppointments(updated);
+        return updated;
+      });
+
       addToast(
         `Appointment booked for ${values.patientName} on ${formatDateDisplay(values.date)} at ${values.time}.`,
         "success"
       );
+
+      // 2. Sync to Supabase in background
+      if (isSupabaseConfigured) {
+        try {
+          const created = await createAppointment({
+            patient_name: values.patientName,
+            mobile: values.phone,
+            doctor: values.doctor,
+            date: values.date,
+            time: values.time,
+            status: "Upcoming",
+            reason: values.symptoms,
+            summary: values.aiSummary,
+          });
+
+          const mapped = mapDbToFrontend(created);
+          setAppointments((prev) => {
+            const updated = prev.map((a) => (a.id === localId ? mapped : a));
+            saveLocalAppointments(updated);
+            return updated;
+          });
+        } catch (err: any) {
+          console.warn("Could not save to Supabase immediately (saved in browser):", err?.message || err);
+        }
+      }
     },
     [addToast]
   );
 
   const handleStatusChange = useCallback(
-    (id: string, newStatus: AppointmentStatus) => {
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
-      );
+    async (id: string, newStatus: AppointmentStatus) => {
+      // Optimistic update in state + localStorage
+      setAppointments((prev) => {
+        const updated = prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a));
+        saveLocalAppointments(updated);
+        return updated;
+      });
+
       const apt = appointments.find((a) => a.id === id);
-      if (apt) {
-        const msg =
-          newStatus === "Completed"
-            ? `Consultation for ${apt.patientName} marked as completed.`
-            : `Appointment for ${apt.patientName} has been canceled.`;
-        addToast(msg, newStatus === "Completed" ? "success" : "error");
+      const msg =
+        newStatus === "Completed"
+          ? `Consultation for ${apt?.patientName ?? "patient"} marked as completed.`
+          : `Appointment for ${apt?.patientName ?? "patient"} has been canceled.`;
+      addToast(msg, newStatus === "Completed" ? "success" : "error");
+
+      if (isSupabaseConfigured && !id.startsWith("apt-")) {
+        try {
+          await updateAppointmentStatus(id, newStatus);
+        } catch (err) {
+          console.warn("Could not sync status change to Supabase:", err);
+        }
       }
     },
     [appointments, addToast]
   );
 
   const handleDelete = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const apt = appointments.find((a) => a.id === id);
-      setAppointments((prev) => prev.filter((a) => a.id !== id));
+      setAppointments((prev) => {
+        const updated = prev.filter((a) => a.id !== id);
+        saveLocalAppointments(updated);
+        return updated;
+      });
+
       if (apt) {
         addToast(`Record for ${apt.patientName} removed.`, "info");
+      }
+
+      if (isSupabaseConfigured && !id.startsWith("apt-")) {
+        try {
+          await deleteAppointment(id);
+        } catch (err) {
+          console.warn("Could not sync delete to Supabase:", err);
+        }
       }
     },
     [appointments, addToast]
@@ -124,19 +275,23 @@ export default function DashboardView() {
         {/* Master-detail layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left: Booking form */}
-          <section className="lg:col-span-5">
+          <section id="book-appointment" className="lg:col-span-5 scroll-mt-24">
             <AppointmentForm onSubmit={handleFormSubmit} />
           </section>
 
           {/* Right: Appointment list + doctor directory */}
           <section className="lg:col-span-7 flex flex-col gap-4">
-            <AppointmentTable
-              appointments={appointments}
-              searchQuery={searchQuery}
-              onStatusChange={handleStatusChange}
-              onDelete={handleDelete}
-            />
-            <DoctorDirectory doctors={DOCTORS} />
+            <div id="schedule" className="scroll-mt-24">
+              <AppointmentTable
+                appointments={appointments}
+                searchQuery={searchQuery}
+                onStatusChange={handleStatusChange}
+                onDelete={handleDelete}
+              />
+            </div>
+            <div id="doctors" className="scroll-mt-24">
+              <DoctorDirectory doctors={DOCTORS} />
+            </div>
           </section>
         </div>
       </div>

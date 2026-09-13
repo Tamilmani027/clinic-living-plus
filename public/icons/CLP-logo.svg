@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 230" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;family=Montserrat:wght@700;800&amp;display=swap');
+      
+      .brand-black { fill: #1d1d1b; }
+      .brand-dark-green { fill: #2d5a3f; }
+      .brand-light-green { fill: #88af85; }
+      .stroke-light-green { stroke: #88af85; fill: none; }
+      
+      .subtext {
+        font-family: 'Cinzel', 'Didot', 'Bodoni MT', 'Times New Roman', serif;
+        font-size: 33px;
+        font-weight: 700;
+        letter-spacing: 5px;
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#ffffff" />
+
+  <!-- Subtitle: CLINIC LIVING PLUS -->
+  <text x="36" y="195" class="subtext">
+    <tspan class="brand-black">CLINIC LIVING </tspan>
+    <tspan class="brand-dark-green">PLUS</tspan>
+  </text>
+
+  <!-- Vertical Divider Bar -->
+  <rect x="282" y="24" width="4.5" height="118" class="brand-black" rx="1.5" />
+
+  <!-- Top Decorative Thin Arcs -->
+  <path d="M 235 110 C 235 25, 340 5, 410 65" 
+        class="stroke-light-green" stroke-width="1.8" stroke-linecap="round" />
+  <path d="M 290 98 C 340 70, 410 80, 400 190" 
+        class="stroke-light-green" stroke-width="1.8" stroke-linecap="round" />
+
+  <!-- Abstract Cross & Person Symbol -->
+  <!-- Cross Base -->
+  <path d="M 338 68 H 368 V 38 H 406 V 68 H 436 V 104 H 406 V 134 H 368 V 104 H 338 Z" 
+        class="brand-light-green" />
+
+  <!-- Person Figure (Integrated Head + Ring) -->
+  <circle cx="387" cy="46" r="14.5" class="stroke-light-green" stroke-width="2.5" />
+  <circle cx="387" cy="46" r="9" class="brand-dark-green" />
+
+  <!-- Acronym: CLP -->
+  <g class="brand-black">
+    <!-- C -->
+    <path d="M 152 74 C 147 62, 137 54, 120 54 C 99 54, 85 71, 85 93 C 85 115, 99 132, 120 132 C 137 132, 147 124, 152 112 L 134 112 C 130 119, 125 122, 119 122 C 105 122, 98 109, 98 93 C 98 77, 105 64, 119 64 C 125 64, 130 67, 134 74 Z" />
+
+    <!-- L -->
+    <path d="M 162 56 H 174 V 120 H 202 V 130 H 162 Z" />
+
+    <!-- P -->
+    <path d="M 218 56 H 248 C 263 56, 273 66, 273 81 C 273 96, 263 106, 248 106 H 230 V 130 H 218 Z M 230 67 V 95 H 247 C 255 95, 261 89, 261 81 C 261 73, 255 67, 247 67 Z" />
+  </g>
+</svg>

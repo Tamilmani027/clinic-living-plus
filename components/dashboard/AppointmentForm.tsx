@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleExclamation,
@@ -180,6 +180,8 @@ const EMPTY: AppointmentFormValues = {
 
 type FormErrors = Partial<Record<keyof AppointmentFormValues, string>>;
 
+const FORM_DRAFT_KEY = "clinic_appointment_form_draft_v1";
+
 export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
   const todayStr = formatDateIso(new Date());
   const [values, setValues] = useState<AppointmentFormValues>({
@@ -191,6 +193,62 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
     "Patient reports acute cephalalgia (migraine, 3-day duration) with photophobia and mild nausea. Flagged for initial neurological triage assessment."
   );
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+
+  // ----------------------------------------------------------------
+  // 1. Restore form inputs from localStorage draft on page refresh
+  // ----------------------------------------------------------------
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(FORM_DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          const today = formatDateIso(new Date());
+          setValues({
+            patientName: parsed.patientName || "",
+            phone: parsed.phone || "",
+            doctor: parsed.doctor || "",
+            date: parsed.date && parsed.date >= today ? parsed.date : today,
+            time: parsed.time || "",
+            symptoms: parsed.symptoms || "",
+          });
+          if (parsed.aiSummary) {
+            setAiSummary(parsed.aiSummary);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Could not load form draft from localStorage:", err);
+    }
+    setIsDraftLoaded(true);
+  }, []);
+
+  // ----------------------------------------------------------------
+  // 2. Auto-save form inputs to localStorage whenever user types
+  // ----------------------------------------------------------------
+  useEffect(() => {
+    if (!isDraftLoaded) return;
+    try {
+      const hasContent =
+        values.patientName ||
+        values.phone ||
+        values.doctor ||
+        values.time ||
+        values.symptoms;
+
+      if (hasContent) {
+        localStorage.setItem(
+          FORM_DRAFT_KEY,
+          JSON.stringify({ ...values, aiSummary })
+        );
+      } else {
+        localStorage.removeItem(FORM_DRAFT_KEY);
+      }
+    } catch (err) {
+      console.warn("Could not save form draft to localStorage:", err);
+    }
+  }, [values, aiSummary, isDraftLoaded]);
 
   // ----------------------------------------------------------------
   // Phone formatter (India: +91 XXXXX-XXXXX)
@@ -293,7 +351,12 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
       setErrors(errs);
       return;
     }
-    onSubmit(values);
+    onSubmit({ ...values, aiSummary });
+    try {
+      localStorage.removeItem(FORM_DRAFT_KEY);
+    } catch (err) {
+      console.warn("Could not clear form draft from localStorage:", err);
+    }
     setValues({ ...EMPTY, date: todayStr });
     setErrors({});
   };
@@ -321,15 +384,29 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
   };
 
   // ----------------------------------------------------------------
-  // AI summary generation
+  // AI summary generation via API
   // ----------------------------------------------------------------
-  const handleGenerateAi = () => {
+  const handleGenerateAi = async () => {
     if (!values.symptoms?.trim()) return;
     setAiGenerating(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/ai-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: values.symptoms }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.summary) {
+          setAiSummary(data.summary);
+        }
+      }
+    } catch (err) {
+      console.warn("AI generation failed, using local generator:", err);
       setAiSummary(generateAiSummary(values.symptoms ?? ""));
+    } finally {
       setAiGenerating(false);
-    }, 900);
+    }
   };
 
   return (
@@ -504,9 +581,6 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
               />
               {aiGenerating ? "Generating..." : "Generate AI Clinical Summary"}
             </button>
-            <span className="text-xs text-[var(--color-outline)] hidden sm:inline">
-              Synthesizes triage assessment
-            </span>
           </div>
 
           {/* AI summary box */}
@@ -551,8 +625,8 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-1 h-12 w-full rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
-          style={{ backgroundColor: "#61ce70", color: "#143318" }}
+          className="mt-1 h-12 w-full rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99] text-white hover:opacity-95"
+          style={{ backgroundColor: "#0D2318", color: "#ffffff" }}
         >
           <FontAwesomeIcon icon={faCalendarCheck} style={{ width: 20, height: 20 }} />
           Confirm &amp; Book Appointment
