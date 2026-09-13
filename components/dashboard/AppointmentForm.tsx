@@ -352,12 +352,6 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             </p>
           </div>
         </div>
-        <span
-          className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
-          style={{ backgroundColor: "#61ce70", color: "#143318" }}
-        >
-          New Intake
-        </span>
       </div>
 
       {/* Form */}
@@ -483,16 +477,6 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           >
             <span className="flex items-center gap-1.5">
               Reason for Visit / Symptoms
-              <span
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                style={{ backgroundColor: "#61ce70", color: "#143318" }}
-              >
-                <FontAwesomeIcon icon={faWandMagicSparkles} style={{ width: 13, height: 13 }} />
-                AI Intake
-              </span>
-            </span>
-            <span className="text-[10px] uppercase tracking-wider text-[var(--color-outline)]">
-              Optional
             </span>
           </label>
 
