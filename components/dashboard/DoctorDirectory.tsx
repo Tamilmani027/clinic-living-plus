@@ -11,7 +11,7 @@ interface DoctorDirectoryProps {
  */
 export default function DoctorDirectory({ doctors }: DoctorDirectoryProps) {
   // Show max 4 on-duty doctors
-  const featured = doctors.slice(0, 4);
+  const featured = doctors
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

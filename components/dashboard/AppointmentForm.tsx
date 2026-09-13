@@ -1,7 +1,21 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import Icon from "@/components/ui/Icon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleExclamation,
+  faCalendarCheck,
+  faWandMagicSparkles,
+  faBrain,
+  faCircleInfo,
+  faUser,
+  faPhone,
+  faStethoscope,
+  faCalendar,
+  faClock,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { DOCTORS, TIME_SLOTS, QUICK_SLOTS, formatDateIso } from "@/lib/data";
 import type { AppointmentFormValues } from "@/lib/types";
 
@@ -76,7 +90,7 @@ function FieldWrapper({
       {children}
       {error && (
         <span className="flex items-center gap-1 text-xs text-[var(--color-error)] mt-0.5">
-          <Icon name="error" size={14} />
+          <FontAwesomeIcon icon={faCircleExclamation} style={{ width: 14, height: 14 }} />
           {error}
         </span>
       )}
@@ -92,12 +106,12 @@ function IconInput({
   icon,
   hasError,
   ...props
-}: { id: string; icon: string; hasError?: boolean } & React.InputHTMLAttributes<HTMLInputElement>) {
+}: { id: string; icon: IconDefinition; hasError?: boolean } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="relative">
-      <Icon
-        name={icon}
-        size={20}
+      <FontAwesomeIcon
+        icon={icon}
+        style={{ width: 20, height: 20 }}
         className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-outline)]"
       />
       <input
@@ -124,14 +138,14 @@ function IconSelect({
   ...props
 }: {
   id: string;
-  icon: string;
+  icon: IconDefinition;
   hasError?: boolean;
 } & React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <div className="relative">
-      <Icon
-        name={icon}
-        size={20}
+      <FontAwesomeIcon
+        icon={icon}
+        style={{ width: 20, height: 20 }}
         className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-outline)]"
       />
       <select
@@ -145,9 +159,9 @@ function IconSelect({
       >
         {children}
       </select>
-      <Icon
-        name="expand_more"
-        size={20}
+      <FontAwesomeIcon
+        icon={faChevronDown}
+        style={{ width: 20, height: 20 }}
         className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] pointer-events-none"
       />
     </div>
@@ -270,7 +284,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ backgroundColor: "#61ce70", color: "#143318" }}
           >
-            <Icon name="edit_calendar" size={22} />
+            <FontAwesomeIcon icon={faCalendarCheck} style={{ width: 22, height: 22 }} />
           </div>
           <div>
             <h2 className="text-base font-semibold text-[var(--color-on-surface)]">
@@ -310,7 +324,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           <IconInput
             id="patient-name"
             name="patientName"
-            icon="person"
+            icon={faUser}
             type="text"
             placeholder="e.g. Sarah Connor"
             value={values.patientName}
@@ -334,7 +348,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           <IconInput
             id="patient-phone"
             name="phone"
-            icon="phone"
+            icon={faPhone}
             type="tel"
             placeholder="+1 (555) 000-0000"
             value={values.phone}
@@ -353,7 +367,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           <IconSelect
             id="doctor-select"
             name="doctor"
-            icon="stethoscope"
+            icon={faStethoscope}
             value={values.doctor}
             onChange={handleChange}
             hasError={!!errors.doctor}
@@ -379,7 +393,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             <IconInput
               id="appointment-date"
               name="date"
-              icon="event"
+              icon={faCalendar}
               type="date"
               value={values.date}
               onChange={handleChange}
@@ -396,7 +410,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
             <IconSelect
               id="appointment-time"
               name="time"
-              icon="schedule"
+              icon={faClock}
               value={values.time}
               onChange={handleChange}
               hasError={!!errors.time}
@@ -425,7 +439,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
                 style={{ backgroundColor: "#61ce70", color: "#143318" }}
               >
-                <Icon name="auto_awesome" size={13} />
+                <FontAwesomeIcon icon={faWandMagicSparkles} style={{ width: 13, height: 13 }} />
                 AI Intake
               </span>
             </span>
@@ -451,9 +465,9 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
               disabled={aiGenerating}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-surface-container)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-primary)] text-xs font-semibold transition-colors disabled:opacity-60"
             >
-              <Icon
-                name="auto_awesome"
-                size={16}
+              <FontAwesomeIcon
+                icon={faWandMagicSparkles}
+                style={{ width: 16, height: 16 }}
                 className={aiGenerating ? "animate-spin" : ""}
               />
               {aiGenerating ? "Generating..." : "Generate AI Clinical Summary"}
@@ -467,7 +481,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           <div className="p-3 rounded-xl bg-[var(--color-surface-container-low)] border border-[var(--color-primary-fixed-dim)]/40 flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-primary)]">
-                <Icon name="psychology" size={14} />
+                <FontAwesomeIcon icon={faBrain} style={{ width: 14, height: 14 }} />
                 AI Clinical Triage Summary
               </div>
               <span className="text-[10px] text-[var(--color-outline)]">
@@ -509,7 +523,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
           className="mt-1 h-12 w-full rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99]"
           style={{ backgroundColor: "#61ce70", color: "#143318" }}
         >
-          <Icon name="event_available" size={20} />
+          <FontAwesomeIcon icon={faCalendarCheck} style={{ width: 20, height: 20 }} />
           Confirm &amp; Book Appointment
         </button>
       </form>
@@ -517,7 +531,7 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
       {/* Notice card */}
       <div className="flex items-start gap-3 p-4 rounded-xl bg-[var(--color-surface-container-low)]">
         <div className="w-8 h-8 rounded-lg bg-[var(--color-secondary-fixed)] flex items-center justify-center text-[var(--color-on-secondary-fixed)] shrink-0">
-          <Icon name="info" size={18} />
+          <FontAwesomeIcon icon={faCircleInfo} style={{ width: 18, height: 18 }} />
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="text-xs font-semibold text-[var(--color-on-surface)]">

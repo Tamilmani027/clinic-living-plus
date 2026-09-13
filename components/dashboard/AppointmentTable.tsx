@@ -3,7 +3,17 @@
 import React, { useMemo, useState } from "react";
 import type { Appointment, AppointmentStatus, FilterStatus } from "@/lib/types";
 import StatusBadge from "@/components/ui/StatusBadge";
-import Icon from "@/components/ui/Icon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faTrash,
+  faCalendarXmark,
+  faMobileScreen,
+  faCalendarDays,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { formatDateDisplay, getInitials } from "@/lib/data";
 
 const FILTER_TABS: FilterStatus[] = ["All", "Upcoming", "Completed", "Canceled"];
@@ -19,7 +29,7 @@ interface AppointmentTableProps {
 // Action buttons
 // -------------------------------------------------------------------
 interface ActionButtonProps {
-  icon: string;
+  icon: IconDefinition;
   label: string;
   colorClass: string;
   disabled?: boolean;
@@ -46,7 +56,7 @@ function ActionButton({
           : "hover:bg-[var(--color-surface-container)] hover:scale-105 active:scale-95"
       } ${colorClass}`}
     >
-      <Icon name={icon} size={19} />
+      <FontAwesomeIcon icon={icon} style={{ width: 19, height: 19 }} />
     </button>
   );
 }
@@ -148,7 +158,7 @@ export default function AppointmentTable({
         /* Empty state */
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-center px-4">
           <div className="w-14 h-14 rounded-full bg-[var(--color-surface-container)] flex items-center justify-center text-[var(--color-outline)]">
-            <Icon name="event_busy" size={32} />
+            <FontAwesomeIcon icon={faCalendarXmark} style={{ width: 32, height: 32 }} />
           </div>
           <div>
             <p className="text-base font-medium text-[var(--color-on-surface)]">
@@ -209,7 +219,7 @@ function AppointmentRow({ appointment: apt, onStatusChange, onDelete }: RowProps
               {apt.patientName}
             </span>
             <span className="text-xs text-[var(--color-outline)] flex items-center gap-1">
-              <Icon name="phone_iphone" size={13} />
+              <FontAwesomeIcon icon={faMobileScreen} style={{ width: 13, height: 13 }} />
               {apt.phone}
             </span>
           </div>
@@ -232,11 +242,11 @@ function AppointmentRow({ appointment: apt, onStatusChange, onDelete }: RowProps
       <td className="py-4 px-4">
         <div className="flex flex-col">
           <span className="text-xs text-[var(--color-on-surface)] flex items-center gap-1">
-            <Icon name="calendar_month" size={15} className="text-[var(--color-outline)]" />
+            <FontAwesomeIcon icon={faCalendarDays} style={{ width: 15, height: 15 }} className="text-[var(--color-outline)]" />
             {formatDateDisplay(apt.date)}
           </span>
           <span className="text-xs text-[var(--color-outline)] flex items-center gap-1">
-            <Icon name="schedule" size={15} className="text-[var(--color-outline)]" />
+            <FontAwesomeIcon icon={faClock} style={{ width: 15, height: 15 }} className="text-[var(--color-outline)]" />
             {apt.time}
           </span>
         </div>
@@ -251,21 +261,21 @@ function AppointmentRow({ appointment: apt, onStatusChange, onDelete }: RowProps
       <td className="py-4 px-4 text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
           <ActionButton
-            icon="check_circle"
+            icon={faCircleCheck}
             label="Mark as Completed"
             colorClass="text-[var(--color-tertiary)]"
             disabled={isCompleted || isCanceled}
             onClick={() => onStatusChange(apt.id, "Completed")}
           />
           <ActionButton
-            icon="cancel"
+            icon={faCircleXmark}
             label="Mark as Canceled"
             colorClass="text-[var(--color-error)]"
             disabled={isCanceled}
             onClick={() => onStatusChange(apt.id, "Canceled")}
           />
           <ActionButton
-            icon="delete"
+            icon={faTrash}
             label="Remove record"
             colorClass="text-[var(--color-outline)] hover:text-[var(--color-error)]"
             onClick={() => onDelete(apt.id)}

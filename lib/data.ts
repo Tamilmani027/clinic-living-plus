@@ -5,34 +5,34 @@ import type { Doctor } from "./types";
 // -------------------------------------------------------------------
 export const DOCTORS: Doctor[] = [
   {
-    id: "dr-jenkins",
-    name: "Dr. Sarah Jenkins",
-    specialty: "Cardiology",
+    id: "dr-roshini",
+    name: "Roshni Sanghvi",
+    specialty: "Registered Holistic Nutritionist Transformation Specialist",
     rating: 4.9,
     nextAvailable: "02:00 PM",
     avatarUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCn2gQTQdmnWj52i2dFEycqT2fy6dn3Sq9A6tWTZAJstfohzFT6GM_qpAFnRZYmcYv_JQWpQ-Q2YgkFQbB3gfq6Zm3TsjxfGYwRV9chTBLtUbdeD7pLxSUeYDGAWS-XR_YzBJOectFvpt_jMDBh0C-1vd_XG_sk6RP8PScrWdgoZpqxKVvYx61CZshZ6sCICyycG0viJ6_WqEwg86zUGGr7wLhfvTn-Z413WLwZNkNB59CrH3yPD66Xww",
     avatarAlt:
-      "Dr. Sarah Jenkins, cardiologist, in white medical coat with stethoscope",
+      "Roshni Sanghvi, Registered Holistic Nutritionist Transformation Specialist",
   },
   {
-    id: "dr-vance",
-    name: "Dr. Marcus Vance",
-    specialty: "Neurology",
+    id: "dr-tejas",
+    name: "Dr. Tejas Udayanand",
+    specialty: "MBBS, MSc SEM",
     rating: 4.7,
     nextAvailable: "11:45 AM",
   },
   {
-    id: "dr-rostova",
-    name: "Dr. Elena Rostova",
-    specialty: "Pediatrics",
+    id: "dr-deekkshitha",
+    name: "Dr Deekkshitha",
+    specialty: "MBBS , FID , Functional medicine",
     rating: 4.8,
     nextAvailable: "09:00 AM",
   },
   {
-    id: "dr-kim",
-    name: "Dr. David Kim",
-    specialty: "General Medicine",
+    id: "dr-ritika",
+    name: "Dr. Ritika Raj (PT)",
+    specialty: "Consultant physiotherapist",
     rating: 4.8,
     nextAvailable: "Tomorrow",
     avatarUrl:
@@ -40,6 +40,34 @@ export const DOCTORS: Doctor[] = [
     avatarAlt:
       "Dr. David Kim, general physician in a contemporary outpatient clinic",
   },
+  {
+    id: "dr-anitha",
+    name: "Dr. Anita GS",
+    specialty: "OBGYN and Women’s Health Coach",
+    rating: 4.8,
+    nextAvailable: "09:00 AM",
+  },
+  {
+    id: "dr-bijli",
+    name: "Dr. Bijli Nanda",
+    specialty: "Lifestyle Physician (MBBS) Palliative Medicine Practitioner",
+    rating: 4.8,
+    nextAvailable: "09:00 AM",
+  },
+  {
+    id: "dr-sulaba",
+    name: "Dr.Sulaba BNYS",
+    specialty: "Naturopathic Doctor | Integrative Wellness Practitioner",
+    rating: 4.8,
+    nextAvailable: "09:00 AM",
+  },
+  {
+    id: "dr-sowmya",
+    name: "Sowmya C",
+    specialty: "HOD-- Alternative Therapy and IV Nurse Practitioner (ND)",
+    rating: 4.8,
+    nextAvailable: "09:00 AM",
+  }
 ];
 
 // -------------------------------------------------------------------

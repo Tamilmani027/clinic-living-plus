@@ -1,10 +1,11 @@
 import React from "react";
-import Icon from "./Icon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 interface StatCardProps {
   label: string;
   value: number;
-  icon: string;
+  icon: IconDefinition;
   /** Tailwind text colour class for the accent (e.g. "text-[var(--color-primary)]") */
   accentClass: string;
 }
@@ -19,7 +20,7 @@ export default function StatCard({ label, value, icon, accentClass }: StatCardPr
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--color-outline)]">
           {label}
         </span>
-        <Icon name={icon} size={18} className={accentClass} />
+        <FontAwesomeIcon icon={icon} style={{ width: 18, height: 18 }} className={accentClass} />
       </div>
       <span className={`text-2xl font-bold mt-1 ${accentClass}`}>{value}</span>
     </div>

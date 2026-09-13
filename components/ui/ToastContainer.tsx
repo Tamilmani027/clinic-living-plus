@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import Icon from "./Icon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck, faCircleExclamation, faCircleInfo, faXmark } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 export type ToastVariant = "success" | "error" | "info";
 
@@ -18,22 +20,22 @@ interface ToastProps {
 
 const VARIANT_CONFIG: Record<
   ToastVariant,
-  { icon: string; bg: string; text: string; border: string }
+  { icon: IconDefinition; bg: string; text: string; border: string }
 > = {
   success: {
-    icon: "check_circle",
+    icon: faCircleCheck,
     bg: "bg-[var(--color-tertiary-fixed)]",
     text: "text-[var(--color-on-tertiary-fixed-variant)]",
     border: "border-[var(--color-tertiary)]",
   },
   error: {
-    icon: "error",
+    icon: faCircleExclamation,
     bg: "bg-[var(--color-error-container)]",
     text: "text-[var(--color-on-error-container)]",
     border: "border-[var(--color-error)]",
   },
   info: {
-    icon: "info",
+    icon: faCircleInfo,
     bg: "bg-[var(--color-secondary-fixed)]",
     text: "text-[var(--color-on-secondary-fixed-variant)]",
     border: "border-[var(--color-secondary)]",
@@ -57,7 +59,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
       role="alert"
       className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg border ${cfg.bg} ${cfg.text} ${cfg.border} animate-slide-in min-w-[280px] max-w-xs`}
     >
-      <Icon name={cfg.icon} size={20} className="shrink-0 mt-0.5" />
+      <FontAwesomeIcon icon={cfg.icon} style={{ width: 20, height: 20 }} className="shrink-0 mt-0.5" />
       <p className="text-sm font-medium leading-snug flex-1">{toast.message}</p>
       <button
         type="button"
@@ -65,7 +67,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
         className="shrink-0 opacity-60 hover:opacity-100 transition-opacity"
         aria-label="Dismiss notification"
       >
-        <Icon name="close" size={18} />
+        <FontAwesomeIcon icon={faXmark} style={{ width: 18, height: 18 }} />
       </button>
     </div>
   );

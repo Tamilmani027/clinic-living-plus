@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import Icon from "./Icon";
 import type { Doctor } from "@/lib/types";
 import { getInitials } from "@/lib/data";
 
@@ -37,10 +36,6 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-semibold text-[var(--color-on-surface)] truncate">
             {doctor.name}
-          </span>
-          <span className="flex items-center gap-0.5 text-xs font-bold text-[var(--color-brand)]">
-            <Icon name="star" size={14} fill={1} className="text-[var(--color-brand)]" />
-            {doctor.rating}
           </span>
         </div>
         <span className="text-xs text-[var(--color-outline)]">

@@ -2,8 +2,17 @@
 
 import React, { useMemo } from "react";
 import StatCard from "@/components/ui/StatCard";
-import Icon from "@/components/ui/Icon";
 import type { Appointment } from "@/lib/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSearch,
+  faCalendarDays,
+  faClock,
+  faCircleCheck,
+  faCircleXmark,
+  faBriefcaseMedical,
+  faShieldHalved,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface HeroBannerProps {
   appointments: Appointment[];
@@ -75,25 +84,25 @@ export default function HeroBanner({
             <StatCard
               label="Total"
               value={stats.total}
-              icon="calendar_today"
+              icon={faCalendarDays}
               accentClass="text-[var(--color-primary)]"
             />
             <StatCard
               label="Upcoming"
               value={stats.upcoming}
-              icon="schedule"
+              icon={faClock}
               accentClass="text-[var(--color-secondary)]"
             />
             <StatCard
               label="Done"
               value={stats.completed}
-              icon="check_circle"
+              icon={faCircleCheck}
               accentClass="text-[var(--color-tertiary)]"
             />
             <StatCard
               label="Canceled"
               value={stats.canceled}
-              icon="cancel"
+              icon={faCircleXmark}
               accentClass="text-[var(--color-error)]"
             />
           </div>
@@ -104,11 +113,7 @@ export default function HeroBanner({
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--color-surface-container-lowest)] p-4 rounded-2xl shadow-sm">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Icon
-            name="search"
-            size={20}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-outline)]"
-          />
+          <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-outline)]" style={{ width: 20 }} />
           <input
             id="global-search-input"
             type="text"
@@ -122,9 +127,9 @@ export default function HeroBanner({
         {/* Info chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-0.5 md:pb-0">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-surface-container-low)] shrink-0">
-            <Icon
-              name="medical_services"
-              size={18}
+            <FontAwesomeIcon
+              icon={faBriefcaseMedical}
+              style={{ width: 18, height: 18 }}
               className="text-[var(--color-primary)]"
             />
             <span className="text-xs font-medium text-[var(--color-on-surface)]">
@@ -132,9 +137,9 @@ export default function HeroBanner({
             </span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-surface-container-low)] shrink-0">
-            <Icon
-              name="verified_user"
-              size={18}
+            <FontAwesomeIcon
+              icon={faShieldHalved}
+              style={{ width: 18, height: 18 }}
               className="text-[var(--color-tertiary)]"
             />
             <span className="text-xs font-medium text-[var(--color-on-surface)]">
