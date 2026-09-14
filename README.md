@@ -1,10 +1,10 @@
-# Clinic Living Plus 🏥
+# Clinic Living Plus 
 
 **Clinic Living Plus** is a modern outpatient desk and appointment management web application designed for clinics and healthcare practitioners. It streamlines patient scheduling, physician assignments, appointment tracking, and automated clinical summaries.
 
 ---
 
-## 🚀 Technologies Used
+## Technologies Used
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router) & [React 19](https://react.dev/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
@@ -15,7 +15,7 @@
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - **Quick Appointment Booking**: Input validation, doctor selection, time slot picking, and Indian phone number formatting (`+91 XXXXX-XXXXX`).
 - **Data Persistence**: Dual-layer architecture syncing to Supabase with browser `localStorage` caching so records and active drafts never disappear on page refresh.
@@ -25,7 +25,7 @@
 
 ---
 
-## 🛠️ Getting Started
+##  Getting Started
 
 ### 1. Prerequisites
 
@@ -69,7 +69,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ---
 
-## 📦 Build for Production
+## Build for Production
 
 To create an optimized production build:
 
